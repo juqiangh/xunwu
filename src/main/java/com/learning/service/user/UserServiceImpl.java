@@ -5,6 +5,9 @@ import com.learning.entity.User;
 import com.learning.repository.RoleRepository;
 import com.learning.repository.UserRepository;
 import com.learning.service.IUserService;
+import com.learning.service.ServiceResult;
+import com.learning.web.dto.UserDTO;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
@@ -25,6 +28,9 @@ public class UserServiceImpl implements IUserService{
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     private final Md5PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
 
     @Override
@@ -41,5 +47,30 @@ public class UserServiceImpl implements IUserService{
         roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getName())));
         user.setAuthorityList(authorities);
         return user;
+    }
+
+    @Override
+    public ServiceResult<UserDTO> findById(Long userId) {
+        User user = userRepository.findOne(userId);
+        if (user == null) {
+            return ServiceResult.notFound();
+        }
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        return ServiceResult.of(userDTO);
+    }
+
+    @Override
+    public User findUserByTelephone(String telephone) {
+        return null;
+    }
+
+    @Override
+    public User addUserByPhone(String telehone) {
+        return null;
+    }
+
+    @Override
+    public ServiceResult modifyUserProfile(String profile, String value) {
+        return null;
     }
 }
